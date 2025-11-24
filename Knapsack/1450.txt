@@ -1,0 +1,39 @@
+1450 - Knapsack
+
+입력 : N, C, 각 물건 별 weight
+
+출력 : 가능한 maximum weight sum
+
+조건 : N 30이하, C 1e9 이하
+
+문제명과 동일하게 Knapsack으로 풀어야함
+
+w_1, w_2, ..., w_n이 있는 상황에서, 
+
+for i in 1 ... N
+	for j in 1 ... W
+		만일 현재 j라는 weight limit 내에 해당 w_i를 추가할 수 없다면 i-1, j 번쨰의 값과 동일할 것
+		만일 추가할 수 있다면, 추가할 경우인 w_i + M[i-1][w-w_i], M[i-1][w] 모두 더해야함
+
+배열 0으로 초기화한 후 위 for loop 돌린다면 풀 수 있음.
+하지만 문제는 C가 1e9 이하라는 것. -> Memory 제한 128MB인데, 만일 2D vector로 계산한다면 제한 초과
+만일 int array로 한다면 int array의 index 제한 지나치게 되어 compile 불가능
+
+
+------------------------------------------------------------------------------
+
+해당 문제 기존 Knapsack으로 풀이 불가능하다고 생각하여 다른 풀이 참고하였음.
+
+Brute Force로 모든 물건에 대하여 조합 가능한 무게, 물건의 조합을 고려한다.
+이후 전체 weight sum이 C이하인 경우를 더한다.
+
+만일 단순히 진행한다면 2^N이고, worst case 2^30이다. 이는 약 10^9으로, 시간 제한 1 second를 넘게 되어 불가능하다.
+=> 두 배열로 나누어 2 * 2^(N/2)만큼의 작업 시간동안 각각의 배열에 대한 조합 경우를 구한다.
+=> 이후 two pointer를 사용하여 두 경우의 weight sum이 C이하인 경우를 모두 찾는다. 
+
+실제 구현한 코드 상에서 time complexity 계산해보자.
+1. 각 array에 대한 경로 탐색 : 모든 index에 대해서 물건 추가하거나 안 하거나 두 경우가 추가되므로 2^(N/2) * 2
+2. 한 vector sort해야하므로 O((N/2) * log (N/2))
+3. 한 vector의 index마다 upper_bound 수행해야하므로 N/2 * O(log(N/2)) = O((N/2) * log (N/2))
+
+결국 time complexity O(2^(N/2))가 되어 1 second 시간 제한 만족할 것이다.
